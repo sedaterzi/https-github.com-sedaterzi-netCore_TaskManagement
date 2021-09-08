@@ -2,7 +2,54 @@
     ViewData["Title"] = "Home Page";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@section Styles{
+    <link href="~/lib/fullcalendar/lib/main.css" rel="stylesheet" />
+}
+<div id="calendar"></div>
+
+
+@section Scripts{
+    <script src="~/lib/fullcalendar/lib/main.js"></script>
+    <script src="~/lib/fullcalendar/lib/locales/tr.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var calendarEl = document.getElementById('calendar');
+            var calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                locale: 'tr',
+                headerToolbar: {
+                    left: 'prev next today',
+                    center: 'title',
+                    right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridForFourDay'
+                },
+                allDaySlot: false,
+                titleFormat: {
+                    year: 'numeric',
+                    month: 'long',
+                    //day: '2-digit',
+                },
+                //titleRangeSeparator: ' /',
+
+
+                //Alternatif bul. Gün isimlerinin tam yazılması amaç
+                /*columnHeaderFormat: {
+                    //month: 'numeric',
+                    weekday: 'long',
+                    //day: 'numeric',
+
+                },*/
+                views: {
+                    timeGridForFourDay: {
+                        type: 'timeGrid',
+                        //dayCount: 4,
+                        duration: {
+                            days: 4
+                        },
+                        buttonText: '4Gün'
+                    }
+                }
+            });
+            calendar.render();
+        });
+    </script>
+}
