@@ -4,25 +4,56 @@
 
 @section Styles{
     <link href="~/lib/fullcalendar/lib/main.css" rel="stylesheet" />
+    <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 }
+
+
 <div id="calendar"></div>
 
 
 @section Scripts{
     <script src="~/lib/fullcalendar/lib/main.js"></script>
     <script src="~/lib/fullcalendar/lib/locales/tr.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             var calendar = new FullCalendar.Calendar(calendarEl, {
+                themeSystem: 'bootstrap',
+                bootstrapFontAwesome: {
+                    dayGridMonth: 'calendar',
+                    prev: 'fa-angle-double-left',
+                    next: 'fa-angle-double-right',
+                    listWeek: 'fa-list',
+                },
                 initialView: 'dayGridMonth',
                 locale: 'tr',
                 headerToolbar: {
-                    left: 'prev next today',
+                    left: 'prev next today addEvent',
                     center: 'title',
-                    right: 'dayGridMonth,timeGridWeek,timeGridDay,timeGridForFourDay'
+                    right: 'dayGridMonth timeGridWeek timeGridDay listWeek'
+                    //listDay, listWeek,listMonth,listYear
                 },
-                allDaySlot: false,
+                footerToolbar: {
+                    left: 'prevYear',
+                    right: 'nextYear'
+                },
+                scrollTime: 'timeGridHour',
+                //minTime:'08:00:00',
+                //maxTime:'20:00:00',
+                slotDuration: '00:30:00',//Zaman çizelgesi saat dilimi aralığı
+                slotLabelInterval: '00:15:00',
+                slotLabelFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                },
+                fixedWeekCount: false,//Ay görünümünde hafta sayısını 6'ya sabitleme. false sabitlemez
+                showNonCurrentDates: true,//Sadece bulunulan ayın günleri görünen ay takvimi. false bir önceki ayın gönlerini göstermez
+                contentHeight: 550,
+                //aspectRatio:2, // En boy oranı
+                allDaySlot: false,//haftalık/gülük görünümlerdeki tüm gün olan eventlar için ayrılmış slotu kapama.
+                // firstDay:1,// Pazardan başlayacak şekilde 0.1.2...
                 titleFormat: {
                     year: 'numeric',
                     month: 'long',
@@ -38,7 +69,7 @@
                     //day: 'numeric',
 
                 },*/
-                views: {
+                /*views: { //İsteğe göre belirenen gün sayısına göre filtreleme seçeneği. Burada tercihen 4 günlük
                     timeGridForFourDay: {
                         type: 'timeGrid',
                         //dayCount: 4,
@@ -47,9 +78,69 @@
                         },
                         buttonText: '4Gün'
                     }
+                },*/
+            /* buttonText: {
+                today:'Bugün ve Bugün',
+                month: 'Ay ve Ay',
+                week: 'Hafta ve Hafta',
+                day:'Gün ve Gün',
+            },*/
+                customButtons: {
+                    addEvent: {
+                        text: 'Ekle',
+                        click: function () {
+                            var newEvent = {
+                                id: 'a',
+                                title: 'New Event',
+                                start: '2021-09-10T15:00:00.00Z',
+                                end: '2021-09-10T17:30:00.00Z',
+                            }
+                            calendar.addEvent(newEvent);
+                        }
+                    }
+                },
+               
+                timeZone:'UTC',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
+                events: [
+                    {
+                        id: 'x',
+                        title: 'Toplantı',
+                        start: '2021-09-09T08:00:00.00Z',
+                        end:'2021-09-09T10:30:00.00Z',
+                    },
+                    {
+                        id: 'y',
+                        title: 'Proje Teslimi',
+                        start: '2021-09-09T13:00:00.00Z',
+                        end: '2021-09-09T15:30:00.00Z',
+                    },
+                    
+                    {
+                        id: 'z',
+                        title: 'Toplantı',
+                        start: '2021-09-11T09:30:00.00Z',
+                        end: '2021-09-11T11:00:00.00Z',
+                    },
+                ],
+                selectable: true,//Takvim üzerinde seçimleri aktif et
+                select: function (selectionInfo) {//Seçimler doğrultusunda çalışacak fonksiyonlar
+                    console.log(selectionInfo);
                 }
             });
             calendar.render();
+            /////////Event çekme
+            var events = calendar.getEvents();
+            console.log(events);
+            //////////id'ye göre event çekme
+            var id = 'x';
+            var eventCek = calendar.getEventById(id);
+            console.log(eventCek);
+            ////////event paramlarını çekme
+            var id = 'x';
+            var eventCek = calendar.getEventById(id);
+            console.log(eventCek.title);
+            ////////event ekleme
+
         });
     </script>
 }
