@@ -8,17 +8,48 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 }
 
+<div class="row">
+    <div class="col-md-2">
+        <div id="otherEvents" style=" position: fixed; z-index: 2;  width: 150px; padding: 0 10px; border: 1px solid #ccc; background: #eee;">
+            <p><strong>Sürüklenebilir Etkinlikler</strong></p>
+            <div class='fc-event ' style=" border: 1px solid #5c7fa7;
+        background: #5c7fa7
+">
+                <div class='fc-event-main' id="isValid">1.Etkinlik</div>
+            </div>
+            <div class='fc-event' >
+                <div class='fc-event-main' id="isNotValid">2.Etkinlik</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-10">
+        <div id="calendar"></div>
 
-<div id="calendar"></div>
+    </div>
+</div>
 
 
 @section Scripts{
+
     <script src="~/lib/fullcalendar/lib/main.js"></script>
     <script src="~/lib/fullcalendar/lib/locales/tr.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
+            let draggableEl = document.getElementById('otherEvents');
+
+            var Draggable = FullCalendar.Draggable;
+            new Draggable(draggableEl, {
+                itemSelector: '.fc-event',
+                eventData: function (eventEl) {
+                    return {
+                        title: eventEl.innerText,
+                        duration: '01:30',
+                    };
+                },
+            });
+
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 themeSystem: 'bootstrap',
                 bootstrapFontAwesome: {
@@ -113,6 +144,7 @@
                 //displayEventTime: true,//Event kutucukları üzerinde saat göster-gösterme
                 //displayEventEnd:true,//Event bitiş saati göster-gösterme
                 //eventOrder:'title',//start, duration, allDay, title,[],function()--> eventlerin çizelge üzerinde çakışanların görünme yöntemi, sıralanması
+                //defaultDate:'2021-07-11',
                 timeZone: 'UTC',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
                 events: [
                     {
@@ -136,10 +168,11 @@
                         end: '2021-09-11T11:00:00.00Z',
                     },
                 ],
-                eventRender: function (info) {
+                //eventRender: function (info) {
 
-                },
+                //},
                 selectable: true,//Takvim üzerinde seçimleri aktif et
+                droppable: true,//Harici sürüklenebilir eventi aktif et
                 select: function (selectionInfo) {//Seçimler doğrultusunda çalışacak fonksiyonlar
                     console.log(selectionInfo);
                 },
@@ -170,9 +203,41 @@
                 //eventllow: function (dropInfoEvent,draggedEvent) {//sürüklenen veya dışarıdan bırakılan eventin özellilkleri
                 //    console.log(fropInfoEvent.start);
                 //    return false;
-                //}
+                //},
+                eventDragStart: function (info) {//Event sürükleme/güncelleme başladığında tetiklenecek fonksiyon. Başlangıç zamanı değişsede değişmese de çalışır
+                    console.log('Event sürüklenmeye başladı');
+                },
+                eventDragStop: function (info) {//Event sürükleme/güncelleme bittiğinde tetiklenecek fonksiyon.bitiş zamanı değişsede değişmesede çalışır
+                    console.log('Eventin sürüklenmesi bitti');
+                },
+                eventDrop: function (eventDropInfo) {//Event sürükleme/güncelleme başlayıp bittikten sonra çalışır. başlangıç ve bitiş zamanı değişmezse çalışmaz. eventDragStop'dan sonra çalışır
+                    console.log('Droped, Sürüklendi');//event, oldEvent,revert(aksilik olduğunda yapılan değişiklikler geri alınır)
+                },
+                eventResizeStart: function (info) {//Event resize edilmeye başlandığında tetiklenecek fonksiyon.başlangıç zamanı değişsede değişmesede çalışır
+                    console.log('Event Resize edilmeye başlandı');
+                },
+                eventResizeStop: function (info) {//Eventın resize edilmesi bittiğinde tetiklenecek fonksiyon.bitiş zamanı değişsede değişmesede çalışır
+                    console.log('Eventın Resize edilmesi tamamlandı');
+                },
+                eventResize: function (eventResizeInfo) {//Event resize edilmeye başlanıp bittikten sonra çalışır.başlangıç ve  bitiş zamanı değişmezse çalışmaz.eventResizeStop'dan sonra çalışır
+                    console.log('Resized, Boyutlandırıldı');//event, oldEvent,revert(aksilik olduğunda yapılan değişiklikler geri alınır)
+                    //Eğer bir aksilik olma durumu kontrolleri sonucu
+                    //eventResizeInfo.revert();
+                },
+                drop: function (dropInfo) {//External event sürüklendiğinde tetiklenecek fonksiyon
+                    console.log("Drop edildi");
+                },
+                eventReceive: function (info) {//Sürüklenen External event eğer ki eventData içeriyorsa  tetiklenecek fonksiyon
+                    console.log("Receive methodu tetiklendi");
+                },
+                eventLeave: function (info) {//Takvimler arası event sürüklendiğinde
+                    console.log("Leave edildi");
+                },
+                //dropaccept:'#isValid',// External eventlerin id'si isValid olanlara sürüklemede izin ver
             });
             calendar.render();
+            new Draggable(draggableEl);
+
             /////////Event çekme
             var events = calendar.getEvents();
             console.log(events);
