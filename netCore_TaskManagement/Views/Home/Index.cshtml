@@ -79,12 +79,12 @@
                         buttonText: '4Gün'
                     }
                 },*/
-            /* buttonText: {
-                today:'Bugün ve Bugün',
-                month: 'Ay ve Ay',
-                week: 'Hafta ve Hafta',
-                day:'Gün ve Gün',
-            },*/
+                /* buttonText: {
+                    today:'Bugün ve Bugün',
+                    month: 'Ay ve Ay',
+                    week: 'Hafta ve Hafta',
+                    day:'Gün ve Gün',
+                },*/
                 customButtons: {
                     addEvent: {
                         text: 'Ekle',
@@ -99,22 +99,36 @@
                         }
                     }
                 },
-               
-                timeZone:'UTC',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
+                // eventColor: 'teal',//Eventlerin çerçeve ve background renkleri
+                eventBackgroundColor: 'teal',
+                eventBorderColor: 'teal',
+                eventTextColor: 'white',
+                eventTimeFormat: {
+                    hour: '2-digit',
+                    minute: '2-digit',
+                    //second: '',
+                    //omitZeroMinute: '',//Tam sayılarda 00 olanları göster-gösterme
+                    //meridiem:'',//am-pm, 'narrow'--> p,a
+                },
+                //displayEventTime: true,//Event kutucukları üzerinde saat göster-gösterme
+                //displayEventEnd:true,//Event bitiş saati göster-gösterme
+                //eventOrder:'title',//start, duration, allDay, title,[],function()--> eventlerin çizelge üzerinde çakışanların görünme yöntemi, sıralanması
+                timeZone: 'UTC',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
                 events: [
                     {
                         id: 'x',
                         title: 'Toplantı',
                         start: '2021-09-09T08:00:00.00Z',
-                        end:'2021-09-09T10:30:00.00Z',
+                        end: '2021-09-09T10:30:00.00Z',
                     },
+
                     {
                         id: 'y',
                         title: 'Proje Teslimi',
-                        start: '2021-09-09T13:00:00.00Z',
-                        end: '2021-09-09T15:30:00.00Z',
+                        start: '2021-09-09T09:00:00.00Z',
+                        end: '2021-09-09T12:00:00.00Z',
                     },
-                    
+
                     {
                         id: 'z',
                         title: 'Toplantı',
@@ -122,10 +136,41 @@
                         end: '2021-09-11T11:00:00.00Z',
                     },
                 ],
+                eventRender: function (info) {
+
+                },
                 selectable: true,//Takvim üzerinde seçimleri aktif et
                 select: function (selectionInfo) {//Seçimler doğrultusunda çalışacak fonksiyonlar
                     console.log(selectionInfo);
-                }
+                },
+                eventClick: function (info) {//Eventler üzerinde tıklandığındaki işlemler
+                    alert(info.event.title);
+                },
+                //eventMouseEnter: function (onMouse) {//mouse event üzerine geldiğinde yapılacak işlemler
+                //    alert(onMouse.event.start);
+                //},
+                //eventMouseLeave: function (onLeave) {// mouse event üzerini terkettiği zaman yapılacak işlemler
+                //    alert(onLeave.event.id);
+                //},
+                editable: true,//takvim üzerinde event güncellenebilirliği
+                //eventStartEditable: true,//event başlangıç zamanı düzenlenebilirliği, çizelge üzerinde kaydırılabilirliği
+                //eventDurationEditable:true,//evetlerin resize özelliği
+                eventDragMinDistance: 100,//event resize animasyonu
+                dragRevertDuration: 1500,//event hatalı srükleme/güncelleme yapıldığında (örn takvim dışına), geri yerine oturma anim süresi
+                dragScroll: true,// event sürükleme/güncelleme sırasında zaman çizelgesinde scroll özelliği otomatikleşmesi
+                snapDuration: '00:15:00',//event sürüklemesinde/güncelleme kaydırma zaman dilimi aralığı. default slotDuration özelliğine eşit yani  30 dk
+                //eventOverlap: function (stillEvent, movingEvent) {//event kaydırmada/güncellemede uygulanacak kurallar (örn başka event ile çakışamaz)
+                //    return stillEvent.allDay && movingEvenet.allDay;//eventler tam gün değillerse çakışmasına izin verme
+                //},
+                //eventConstraint: {// Event sürüklemede/güncellemede izin verilecek kurallar
+                //    startTime: '10:00',
+                //    endTime: '19:00',
+                //    daysOfWeek:[1,2,3],//Haftanın 1.2. ve 3. günlerinde izin ver
+                //},
+                //eventllow: function (dropInfoEvent,draggedEvent) {//sürüklenen veya dışarıdan bırakılan eventin özellilkleri
+                //    console.log(fropInfoEvent.start);
+                //    return false;
+                //}
             });
             calendar.render();
             /////////Event çekme
@@ -139,7 +184,8 @@
             var id = 'x';
             var eventCek = calendar.getEventById(id);
             console.log(eventCek.title);
-            ////////event ekleme
+            ////////event render etme
+            //calendar.renderEvents();
 
         });
     </script>
