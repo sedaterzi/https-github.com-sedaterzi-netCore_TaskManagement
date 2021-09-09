@@ -52,6 +52,8 @@
 
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 themeSystem: 'bootstrap',
+                locale: 'tr',
+                timeZone: 'local',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
                 bootstrapFontAwesome: {
                     dayGridMonth: 'calendar',
                     prev: 'fa-angle-double-left',
@@ -59,11 +61,11 @@
                     listWeek: 'fa-list',
                 },
                 initialView: 'dayGridMonth',
-                locale: 'tr',
+                
                 headerToolbar: {
-                    left: 'prev next today addEvent',
+                    left: 'prev next today',
                     center: 'title',
-                    right: 'dayGridMonth timeGridWeek timeGridDay listWeek'
+                    right: 'dayGridMonth timeGridWeek listWeek'
                     //listDay, listWeek,listMonth,listYear
                 },
                 footerToolbar: {
@@ -116,20 +118,6 @@
                     week: 'Hafta ve Hafta',
                     day:'Gün ve Gün',
                 },*/
-                customButtons: {
-                    addEvent: {
-                        text: 'Ekle',
-                        click: function () {
-                            var newEvent = {
-                                id: 'a',
-                                title: 'New Event',
-                                start: '2021-09-10T15:00:00.00Z',
-                                end: '2021-09-10T17:30:00.00Z',
-                            }
-                            calendar.addEvent(newEvent);
-                        }
-                    }
-                },
                 // eventColor: 'teal',//Eventlerin çerçeve ve background renkleri
                 eventBackgroundColor: 'teal',
                 eventBorderColor: 'teal',
@@ -145,29 +133,7 @@
                 //displayEventEnd:true,//Event bitiş saati göster-gösterme
                 //eventOrder:'title',//start, duration, allDay, title,[],function()--> eventlerin çizelge üzerinde çakışanların görünme yöntemi, sıralanması
                 //defaultDate:'2021-07-11',
-                timeZone: 'UTC',//Her tarayıcıda etkinlik saat diliminin aynı olması. default olarak local gelir
-                events: [
-                    {
-                        id: 'x',
-                        title: 'Toplantı',
-                        start: '2021-09-09T08:00:00.00Z',
-                        end: '2021-09-09T10:30:00.00Z',
-                    },
-
-                    {
-                        id: 'y',
-                        title: 'Proje Teslimi',
-                        start: '2021-09-09T09:00:00.00Z',
-                        end: '2021-09-09T12:00:00.00Z',
-                    },
-
-                    {
-                        id: 'z',
-                        title: 'Toplantı',
-                        start: '2021-09-11T09:30:00.00Z',
-                        end: '2021-09-11T11:00:00.00Z',
-                    },
-                ],
+                events: [],
                 //eventRender: function (info) {
 
                 //},
