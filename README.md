@@ -13,7 +13,7 @@ Uygulama Ekran Görüntüleri:
 --Identity ile üyelik işlemleri eklenebilir.
 --Basit mobil ve masaüstü uygulamaları geliştirilerek entegre edilebilir. 
 # Kazanımlar: 
---Detaylı olarak javascript,jquery ve ajax ile geliştirme yapma fırsatı elde edildi.
+--Detaylı olarak javascript, jquery ve ajax ile geliştirme yapma fırsatı elde edildi.
 --FullCalendar javascript kütüphanesini özelleştirme fırsatı elde edildi. 
 
 
