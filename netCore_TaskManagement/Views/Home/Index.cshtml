@@ -10,7 +10,7 @@
 
 }
 
-<!-- Modal -->
+<!-- Save Event Modal -->
 <div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
@@ -56,6 +56,56 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
                 <button id="btnSave" type="button" class="btn btn-primary">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Detail Event Modal -->
+<div class="modal fade" id="detailModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="font-size: larger;font-weight: bold">
+                    Etkinlik Detayları
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="form-group">
+                        <label class="form-control-label" style="font-weight:bold">Etkinlik Adı </label>
+                        <input disabled id="inputTitleDetail" type="text" class="form-control" />
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="form-control-label" style="font-weight:bold">Başlangıç Tarihi </label>
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                <input disabled id="inputStartDateDetail" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-control-label" style="font-weight:bold">Bitiş Tarihi </label>
+                            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                                <input disabled id="inputEndDateDetail" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+                                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label" style="font-weight:bold">Açıklama </label>
+                        <textarea disabled id="inputDescriptionDetail" type="text" class="form-control">Açıklama Giriniz...</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button id="btnDelete" class="btn btn-outline-danger">Sil</button>
+                <button id="btnUpdate" type="button" class="btn btn-outline-primary">Güncelle</button>
             </div>
         </div>
     </div>
@@ -131,6 +181,8 @@
                     right: 'nextYear'
                 },
                 scrollTime: 'timeGridHour',
+                snapDuration: '00:15:00',//event sürüklemesinde/güncelleme kaydırma zaman dilimi aralığı. default slotDuration özelliğine eşit yani  30 dk
+
                 //minTime:'08:00:00',
                 //maxTime:'20:00:00',
                 slotDuration: '00:30:00',//Zaman çizelgesi saat dilimi aralığı
@@ -209,7 +261,18 @@
                     openAddOrUpdateModal();
                 },
                 eventClick: function (info) {//Eventler üzerinde tıklandığındaki işlemler
-                    alert(info.event.title);
+                    selectedEvent = {
+                        id: info.event.id,
+                        title: info.event.title,
+                        start: moment(info.event.start),
+                        end: moment(info.event.end),
+                        description: info.event.extendedProps.description,
+                    },
+                        $('#inputStartDateDetail').val(moment(info.event.start).format('DD/MM/YYYY HH:mm')),
+                        $('#inputEndDateDetail').val(moment(info.event.end).format('DD/MM/YYYY HH:mm')),
+                        $('#inputTitleDetail').val(info.event.title),
+                        $('#inputDescriptionDetail').val(info.event.extendedProps.description),
+                        $('#detailModal').modal();
                 },
                 //eventMouseEnter: function (onMouse) {//mouse event üzerine geldiğinde yapılacak işlemler
                 //    alert(onMouse.event.start);
@@ -223,7 +286,6 @@
                 eventDragMinDistance: 100,//event resize animasyonu
                 dragRevertDuration: 1500,//event hatalı srükleme/güncelleme yapıldığında (örn takvim dışına), geri yerine oturma anim süresi
                 dragScroll: true,// event sürükleme/güncelleme sırasında zaman çizelgesinde scroll özelliği otomatikleşmesi
-                snapDuration: '00:15:00',//event sürüklemesinde/güncelleme kaydırma zaman dilimi aralığı. default slotDuration özelliğine eşit yani  30 dk
                 //eventOverlap: function (stillEvent, movingEvent) {//event kaydırmada/güncellemede uygulanacak kurallar (örn başka event ile çakışamaz)
                 //    return stillEvent.allDay && movingEvenet.allDay;//eventler tam gün değillerse çakışmasına izin verme
                 //},
@@ -244,6 +306,14 @@
                 },
                 eventDrop: function (eventDropInfo) {//Event sürükleme/güncelleme başlayıp bittikten sonra çalışır. başlangıç ve bitiş zamanı değişmezse çalışmaz. eventDragStop'dan sonra çalışır
                     console.log('Droped, Sürüklendi');//event, oldEvent,revert(aksilik olduğunda yapılan değişiklikler geri alınır)
+                    var event = {
+                        Id: eventDropInfo.event.id,
+                        StartDate: moment(eventDropInfo.event.start).format('DD/MM/YYYY HH:mm'),
+                        EndDate: moment(eventDropInfo.event.end).format('DD/MM/YYYY HH:mm'),
+                        Title: eventDropInfo.event.title,
+                        Description: eventDropInfo.event.description,
+                    }
+                    saveEvent(event);
                 },
                 eventResizeStart: function (info) {//Event resize edilmeye başlandığında tetiklenecek fonksiyon.başlangıç zamanı değişsede değişmesede çalışır
                     console.log('Event Resize edilmeye başlandı');
@@ -253,9 +323,16 @@
                 },
                 eventResize: function (eventResizeInfo) {//Event resize edilmeye başlanıp bittikten sonra çalışır.başlangıç ve  bitiş zamanı değişmezse çalışmaz.eventResizeStop'dan sonra çalışır
                     console.log('Resized, Boyutlandırıldı');//event, oldEvent,revert(aksilik olduğunda yapılan değişiklikler geri alınır)
-                    //Eğer bir aksilik olma durumu kontrolleri sonucu
-                    //eventResizeInfo.revert();
+                    var event = {
+                        Id: eventResizeInfo.event.id,
+                        StartDate: moment(eventResizeInfo.event.start).format('DD/MM/YYYY HH:mm'),
+                        EndDate: moment(eventResizeInfo.event.end).format('DD/MM/YYYY HH:mm'),
+                        Title: eventResizeInfo.event.title,
+                        Description: eventResizeInfo.event.description,
+                    }
+                    saveEvent(event);
                 },
+
                 drop: function (dropInfo) {//External event sürüklendiğinde tetiklenecek fonksiyon
                     console.log("Drop edildi");
                 },
@@ -280,6 +357,11 @@
                     type: 'GET',
                     url: '/event/GetEvent',
                     success: function (response) {
+                        events = [];
+                        var sources = calendar.getEventSources();
+                        for (var i = 0; i < sources.length; i++) {
+                            sources[i].remove();
+                        }
                         for (var i = 0; i < response.length; i++) {
                             events.push({
                                 id: response[i].id,
@@ -300,6 +382,7 @@
 
             function openAddOrUpdateModal() {
                 if (selectedEvent != null) {
+                    $('#eventId').val(selectedEvent.id);
                     $('#inputTitle').val(selectedEvent.title);
                     $('#inputStartDate').val(selectedEvent.start.format('DD/MM/YYYY HH:mm'));
                     $('#inputEndDate').val(selectedEvent.end.format('DD/MM/YYYY HH:mm'));
@@ -318,7 +401,7 @@
                         if (response == "200") {
                             getEvents();
                             $('#saveModal').modal('hide');
-                            alertify.success('Ekleme/Güncelleme başarıyla gerçekleşti..');
+                            data.Id === "0" ? alertify.success('Etkinlik başarıyla eklendi..') : alertify.success('Etkinlik başarıyla güncellendi..');
                         } else {
                             alertify.warning('Ekleme/Güncelleme başarısız..');
                         }
@@ -346,6 +429,31 @@
                 saveEvent(event);
             })
 
+            $('#btnUpdate').click(function () {
+                $('#detailModal').modal('hide');
+                openAddOrUpdateModal();
+            });
+
+            $('#btnDelete').click(function () {
+                if (confirm('Etkinliği silmek istediğinize emin misiniz?')) {
+                    $.ajax({
+                        type: 'GET',
+                        url: '/Event/DeleteEvent?id=' + selectedEvent.id,
+                        success: function (response) {
+                            if (response === '200') {
+                                var event = calendar.getEventById(selectedEvent.id);
+                                event.remove();
+                                $('#detailModal').modal('hide');
+                                alertify.success('Etkinlik silinmiştir.');
+                            }
+                        },
+                        error: function () {
+                            $('#detailModal').modal('hide');
+                            alertify.error('Etkinlik silinirken bir problem oluştu.');
+                        }
+                    });
+                }
+            });
 
 
             ///////////Event çekme
