@@ -111,25 +111,11 @@
     </div>
 </div>
 
-<div class="row">
-    <div class="col-md-2">
-        <div id="otherEvents" style=" position: fixed; z-index: 2;  width: 150px; padding: 0 10px; border: 1px solid #ccc; background: #eee;">
-            <p><strong>Sürüklenebilir Etkinlikler</strong></p>
-            <div class='fc-event ' style=" border: 1px solid #5c7fa7;
-        background: #5c7fa7
-">
-                <div class='fc-event-main' id="isValid">1.Etkinlik</div>
-            </div>
-            <div class='fc-event'>
-                <div class='fc-event-main' id="isNotValid">2.Etkinlik</div>
-            </div>
-        </div>
-    </div>
+ 
     <div class="col-md-10">
         <div id="calendar"></div>
 
     </div>
-</div>
 
 
 @section Scripts{
@@ -183,8 +169,6 @@
                 scrollTime: 'timeGridHour',
                 snapDuration: '00:15:00',//event sürüklemesinde/güncelleme kaydırma zaman dilimi aralığı. default slotDuration özelliğine eşit yani  30 dk
 
-                //minTime:'08:00:00',
-                //maxTime:'20:00:00',
                 slotDuration: '00:30:00',//Zaman çizelgesi saat dilimi aralığı
                 slotLabelInterval: '00:15:00',
                 slotLabelFormat: {
@@ -194,41 +178,13 @@
                 fixedWeekCount: false,//Ay görünümünde hafta sayısını 6'ya sabitleme. false sabitlemez
                 showNonCurrentDates: true,//Sadece bulunulan ayın günleri görünen ay takvimi. false bir önceki ayın gönlerini göstermez
                 contentHeight: 550,
-                //aspectRatio:2, // En boy oranı
                 allDaySlot: false,//haftalık/gülük görünümlerdeki tüm gün olan eventlar için ayrılmış slotu kapama.
-                // firstDay:1,// Pazardan başlayacak şekilde 0.1.2...
                 titleFormat: {
                     year: 'numeric',
                     month: 'long',
                     //day: '2-digit',
                 },
-                //titleRangeSeparator: ' /',
-
-
-                //Alternatif bul. Gün isimlerinin tam yazılması amaç
-                /*columnHeaderFormat: {
-                    //month: 'numeric',
-                    weekday: 'long',
-                    //day: 'numeric',
-
-                },*/
-                /*views: { //İsteğe göre belirenen gün sayısına göre filtreleme seçeneği. Burada tercihen 4 günlük
-                    timeGridForFourDay: {
-                        type: 'timeGrid',
-                        //dayCount: 4,
-                        duration: {
-                            days: 4
-                        },
-                        buttonText: '4Gün'
-                    }
-                },*/
-                /* buttonText: {
-                    today:'Bugün ve Bugün',
-                    month: 'Ay ve Ay',
-                    week: 'Hafta ve Hafta',
-                    day:'Gün ve Gün',
-                },*/
-                // eventColor: 'teal',//Eventlerin çerçeve ve background renkleri
+     
                 eventBackgroundColor: 'teal',
                 eventBorderColor: 'teal',
                 eventTextColor: 'white',
@@ -239,16 +195,11 @@
                     //omitZeroMinute: '',//Tam sayılarda 00 olanları göster-gösterme
                     //meridiem:'',//am-pm, 'narrow'--> p,a
                 },
-                //displayEventTime: true,//Event kutucukları üzerinde saat göster-gösterme
-                //displayEventEnd:true,//Event bitiş saati göster-gösterme
-                //eventOrder:'title',//start, duration, allDay, title,[],function()--> eventlerin çizelge üzerinde çakışanların görünme yöntemi, sıralanması
-                //defaultDate:'2021-07-11',
+              
                 events: [],
-                //eventRender: function (info) {
-
-                //},
+     
                 selectable: true,//Takvim üzerinde seçimleri aktif et
-                droppable: true,//Harici sürüklenebilir eventi aktif et
+                droppable: false,//Harici sürüklenebilir eventi aktif et
                 select: function (selectionInfo) {//Seçimler doğrultusunda çalışacak fonksiyonlar
                     console.log(selectionInfo);
                     selectedEvent = {
@@ -274,30 +225,13 @@
                         $('#inputDescriptionDetail').val(info.event.extendedProps.description),
                         $('#detailModal').modal();
                 },
-                //eventMouseEnter: function (onMouse) {//mouse event üzerine geldiğinde yapılacak işlemler
-                //    alert(onMouse.event.start);
-                //},
-                //eventMouseLeave: function (onLeave) {// mouse event üzerini terkettiği zaman yapılacak işlemler
-                //    alert(onLeave.event.id);
-                //},
+                
                 editable: true,//takvim üzerinde event güncellenebilirliği
-                //eventStartEditable: true,//event başlangıç zamanı düzenlenebilirliği, çizelge üzerinde kaydırılabilirliği
-                //eventDurationEditable:true,//evetlerin resize özelliği
+               
                 eventDragMinDistance: 100,//event resize animasyonu
                 dragRevertDuration: 1500,//event hatalı srükleme/güncelleme yapıldığında (örn takvim dışına), geri yerine oturma anim süresi
                 dragScroll: true,// event sürükleme/güncelleme sırasında zaman çizelgesinde scroll özelliği otomatikleşmesi
-                //eventOverlap: function (stillEvent, movingEvent) {//event kaydırmada/güncellemede uygulanacak kurallar (örn başka event ile çakışamaz)
-                //    return stillEvent.allDay && movingEvenet.allDay;//eventler tam gün değillerse çakışmasına izin verme
-                //},
-                //eventConstraint: {// Event sürüklemede/güncellemede izin verilecek kurallar
-                //    startTime: '10:00',
-                //    endTime: '19:00',
-                //    daysOfWeek:[1,2,3],//Haftanın 1.2. ve 3. günlerinde izin ver
-                //},
-                //eventllow: function (dropInfoEvent,draggedEvent) {//sürüklenen veya dışarıdan bırakılan eventin özellilkleri
-                //    console.log(fropInfoEvent.start);
-                //    return false;
-                //},
+               
                 eventDragStart: function (info) {//Event sürükleme/güncelleme başladığında tetiklenecek fonksiyon. Başlangıç zamanı değişsede değişmese de çalışır
                     console.log('Event sürüklenmeye başladı');
                 },
@@ -342,7 +276,6 @@
                 eventLeave: function (info) {//Takvimler arası event sürüklendiğinde
                     console.log("Leave edildi");
                 },
-                //dropaccept:'#isValid',// External eventlerin id'si isValid olanlara sürüklemede izin ver
             });
             calendar.render();
             getEvents();
@@ -414,7 +347,7 @@
             }
 
             $('#btnSave').click(function () {
-                //validasyon
+                //validasyon işlemleri
                 if ($('#inputTitle').val() === "") {
                     alert("Etkinlik adı alanı boş bırakılamaz..");
                     return;
@@ -455,20 +388,6 @@
                 }
             });
 
-
-            ///////////Event çekme
-            //var events = calendar.getEvents();
-            //console.log(events);
-            ////////////id'ye göre event çekme
-            //var id = 'x';
-            //var eventCek = calendar.getEventById(id);
-            //console.log(eventCek);
-            //////////event paramlarını çekme
-            //var id = 'x';
-            //var eventCek = calendar.getEventById(id);
-            //console.log(eventCek.title);
-            //////////event render etme
-            ////calendar.renderEvents();
 
         });
     </script>
