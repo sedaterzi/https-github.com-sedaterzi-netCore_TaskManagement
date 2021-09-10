@@ -6,7 +6,60 @@
     <link href="~/lib/fullcalendar/lib/main.css" rel="stylesheet" />
     <link href="~/lib/bootstrap/dist/css/bootstrap.css" rel="stylesheet" />
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/css/tempusdominus-bootstrap-4.min.css" integrity="sha512-3JRrEUwaCkFUBLK1N8HehwQgu8e23jTH4np5NHOmQOobuC4ROQxFwFgBLTnhcnQRMs84muMh0PnnwXlPq5MGjg==" crossorigin="anonymous" />
+
 }
+
+<!-- Modal -->
+<div class="modal fade" id="saveModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel" style="font-size: larger;font-weight: bold">
+                    Etkinlik Ekleme/Güncelleme
+                </h5>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <input hidden id="eventId" />
+                    <div class="form-group">
+                        <label class="form-control-label" style="font-weight:bold">Etkinlik Adı </label>
+                        <input id="inputTitle" type="text" class="form-control" />
+                    </div>
+                    <div class="row">
+                        <div class="form-group col-md-6">
+                            <label class="form-control-label" style="font-weight:bold">Başlangıç Tarihi </label>
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                <input id="inputStartDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" />
+                                <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group col-md-6">
+                            <label class="form-control-label" style="font-weight:bold">Bitiş Tarihi </label>
+                            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                                <input id="inputEndDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" />
+                                <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-control-label" style="font-weight:bold">Açıklama </label>
+                        <textarea id="inputDescription" type="text" class="form-control">Açıklama Giriniz...</textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Kapat</button>
+                <button id="btnSave" type="button" class="btn btn-primary">Kaydet</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div class="row">
     <div class="col-md-2">
@@ -17,7 +70,7 @@
 ">
                 <div class='fc-event-main' id="isValid">1.Etkinlik</div>
             </div>
-            <div class='fc-event' >
+            <div class='fc-event'>
                 <div class='fc-event-main' id="isNotValid">2.Etkinlik</div>
             </div>
         </div>
@@ -34,10 +87,15 @@
     <script src="~/lib/fullcalendar/lib/main.js"></script>
     <script src="~/lib/fullcalendar/lib/locales/tr.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.min.js" integrity="sha512-k6/Bkb8Fxf/c1Tkyl39yJwcOZ1P4cRrJu77p83zJjN2Z55prbFHxPs9vN7q3l3+tSMGPDdoH51AEU8Vgo1cgAA==" crossorigin="anonymous"></script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             var calendarEl = document.getElementById('calendar');
             let draggableEl = document.getElementById('otherEvents');
+            var selectedEvent = null;
+            var events = [];
 
             var Draggable = FullCalendar.Draggable;
             new Draggable(draggableEl, {
@@ -61,7 +119,7 @@
                     listWeek: 'fa-list',
                 },
                 initialView: 'dayGridMonth',
-                
+
                 headerToolbar: {
                     left: 'prev next today',
                     center: 'title',
@@ -141,6 +199,14 @@
                 droppable: true,//Harici sürüklenebilir eventi aktif et
                 select: function (selectionInfo) {//Seçimler doğrultusunda çalışacak fonksiyonlar
                     console.log(selectionInfo);
+                    selectedEvent = {
+                        id: 0,
+                        title: "",
+                        start: moment(selectionInfo.start),
+                        end: moment(selectionInfo.end),
+                        description: "",
+                    }
+                    openAddOrUpdateModal();
                 },
                 eventClick: function (info) {//Eventler üzerinde tıklandığındaki işlemler
                     alert(info.event.title);
@@ -202,21 +268,99 @@
                 //dropaccept:'#isValid',// External eventlerin id'si isValid olanlara sürüklemede izin ver
             });
             calendar.render();
+            getEvents();
+            $('#datetimepicker1, #datetimepicker2').datetimepicker({
+                format: 'DD/MM/YYYY HH:mm',
+            });
+
             new Draggable(draggableEl);
 
-            /////////Event çekme
-            var events = calendar.getEvents();
-            console.log(events);
-            //////////id'ye göre event çekme
-            var id = 'x';
-            var eventCek = calendar.getEventById(id);
-            console.log(eventCek);
-            ////////event paramlarını çekme
-            var id = 'x';
-            var eventCek = calendar.getEventById(id);
-            console.log(eventCek.title);
-            ////////event render etme
-            //calendar.renderEvents();
+            function getEvents() {
+                $.ajax({
+                    type: 'GET',
+                    url: '/event/GetEvent',
+                    success: function (response) {
+                        for (var i = 0; i < response.length; i++) {
+                            events.push({
+                                id: response[i].id,
+                                title: response[i].title,
+                                start: response[i].startDate,
+                                end: response[i].endDate,
+                                description: response[i].description,
+                            })
+                        }
+                        calendar.addEventSource(events);
+                    },
+                    error: function () {
+                        $('#saveModal').modal('hide');
+                        alertify.error('İşlem gerçekleşemedi..');
+                    }
+                })
+            }
+
+            function openAddOrUpdateModal() {
+                if (selectedEvent != null) {
+                    $('#inputTitle').val(selectedEvent.title);
+                    $('#inputStartDate').val(selectedEvent.start.format('DD/MM/YYYY HH:mm'));
+                    $('#inputEndDate').val(selectedEvent.end.format('DD/MM/YYYY HH:mm'));
+                    $('#inputDescription').val(selectedEvent.description);
+                }
+                $('#saveModal').modal();
+
+            }
+
+            function saveEvent(data) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/event/AddOrUpdateEvent',
+                    data: data,
+                    success: function (response) {
+                        if (response == "200") {
+                            getEvents();
+                            $('#saveModal').modal('hide');
+                            alertify.success('Ekleme/Güncelleme başarıyla gerçekleşti..');
+                        } else {
+                            alertify.warning('Ekleme/Güncelleme başarısız..');
+                        }
+                    },
+                    error: function () {
+                        $('#saveModal').modal('hide');
+                        alertify.error('İşlem gerçekleşemedi..');
+                    }
+                })
+            }
+
+            $('#btnSave').click(function () {
+                //validasyon
+                if ($('#inputTitle').val() === "") {
+                    alert("Etkinlik adı alanı boş bırakılamaz..");
+                    return;
+                }
+                var event = {
+                    Id: $('#eventId').val(),
+                    StartDate: $('#inputStartDate').val(),
+                    EndDate: $('#inputEndDate').val(),
+                    Title: $('#inputTitle').val(),
+                    Description: $('#inputDescription').val(),
+                }
+                saveEvent(event);
+            })
+
+
+
+            ///////////Event çekme
+            //var events = calendar.getEvents();
+            //console.log(events);
+            ////////////id'ye göre event çekme
+            //var id = 'x';
+            //var eventCek = calendar.getEventById(id);
+            //console.log(eventCek);
+            //////////event paramlarını çekme
+            //var id = 'x';
+            //var eventCek = calendar.getEventById(id);
+            //console.log(eventCek.title);
+            //////////event render etme
+            ////calendar.renderEvents();
 
         });
     </script>

@@ -15,6 +15,18 @@ namespace netCore_TaskManagement.Controllers
         {
             _context = context;
         }
+        public JsonResult GetEvent()
+        {
+            var model = _context.Events.Select(x => new EventViewModel()
+            {
+                Id = x.Id,
+                Title = x.Title,
+                StartDate = x.StartDate,
+                EndDate = x.EndDate,
+                Description = x.Description,
+            });
+            return Json(model);
+        }
         [HttpPost]
         public JsonResult AddOrUpdateEvent(AddOrUpdateEventModel model)
         {
