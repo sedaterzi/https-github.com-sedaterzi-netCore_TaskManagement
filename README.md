@@ -4,7 +4,7 @@
 
 
 Uygulama Ekran Görüntüleri:  
-[PITON_Backend_TestRapor.pdf](https://github.com/sedaterzi/netCore_TaskManagement/files/7145156/PITON_Backend_TestRapor.pdf)
+[Arayüz_Rapor.pdf](https://github.com/sedaterzi/netCore_TaskManagement/files/7211541/Arayuz_Rapor.pdf)
 
 
 # Eksikler ve Hatalar: 
